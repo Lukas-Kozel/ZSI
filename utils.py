@@ -4,7 +4,7 @@ from numpy.fft import fft
 import matplotlib.pyplot as plt
 import math
 
-def plot_graph_FIR(fir_coeff, filtered_data, original_data, fs, filter_name: str, save_graph=False, filename=None):
+def plot_graph_FIR(fir_coeff, filtered_data, original_data, fs, filter_name: str):
     w, h = freqz(fir_coeff, fs=fs)
     
     f, t, Sxx = spectrogram(filtered_data, fs)
@@ -47,12 +47,9 @@ def plot_graph_FIR(fir_coeff, filtered_data, original_data, fs, filter_name: str
     ax[2].legend()
     
     plt.tight_layout()
-    if save_graph:
-        if filename is not None:
-            plt.savefig(filename,format='eps')
     plt.show()
 
-def custom_FIR(order, band, f_parasite, data, fs, plot=False, save_graph=False,filename=None):
+def custom_FIR(order, band, f_parasite, data, fs, plot=False):
     h = list()
     f_h = f_parasite+band
     f_d = f_parasite-band
@@ -77,9 +74,6 @@ def custom_FIR(order, band, f_parasite, data, fs, plot=False, save_graph=False,f
         ax[0].grid(True)
         
         plt.tight_layout()
-        if save_graph:
-            if filename is not None:
-                plt.savefig(filename,format='eps')
         plt.show()
         
 
@@ -88,7 +82,7 @@ def custom_FIR(order, band, f_parasite, data, fs, plot=False, save_graph=False,f
     return (filtered_data,h)
 
 
-def plot_graph_IIR(b,a, filtered_data, original_data, fs, filter_name: str,save_graph=False,filename=None):
+def plot_graph_IIR(b,a, filtered_data, original_data, fs, filter_name: str):
     w, h = freqz(b,a, fs=fs)
     
     f, t, Sxx = spectrogram(filtered_data, fs)
@@ -130,13 +124,10 @@ def plot_graph_IIR(b,a, filtered_data, original_data, fs, filter_name: str,save_
     ax[2].legend()
     
     plt.tight_layout()
-    if save_graph:
-        if filename is not None:
-            plt.savefig(filename,format='eps')
     plt.show()
     
 
-def plot_graph_IIR_sos(sos, filtered_data, original_data, fs, filter_name: str,save_graph=False,filename=None):
+def plot_graph_IIR_sos(sos, filtered_data, original_data, fs, filter_name: str):
     w, h = sosfreqz(sos, fs=fs)
     
     f, t, Sxx = spectrogram(filtered_data, fs)
@@ -179,9 +170,6 @@ def plot_graph_IIR_sos(sos, filtered_data, original_data, fs, filter_name: str,s
     ax[2].legend()
     
     plt.tight_layout()
-    if save_graph:
-        if filename is not None:
-            plt.savefig(filename,format='eps')
     plt.show()
 
 def noise_cancel(m, noise, resampled_data, a):
@@ -252,7 +240,7 @@ def custom_FFT(data):
         W *= W_N
     return output
 
-def plot_spectrogram(data, fs, title="",save_graph=False,filename=None):
+def plot_spectrogram(data, fs, title=""):
 
     window_size = int(round(0.03 * fs))
     overlap = int(round(0.5 * window_size))
@@ -272,15 +260,9 @@ def plot_spectrogram(data, fs, title="",save_graph=False,filename=None):
     plt.ylabel(r'$f\,[Hz]$', fontsize=12)
     plt.colorbar(label="Log Power")
     plt.tight_layout()
-    if save_graph:
-        if filename is not None:
-            original_size = fig.get_size_inches().copy()
-            fig.set_size_inches(6, 4)
-            plt.savefig(filename, format='eps', bbox_inches='tight', dpi=72)
-            fig.set_size_inches(original_size)
     plt.show()
 
-def plot_amplitude_char(data, fs,save_graph=False,filename=None):
+def plot_amplitude_char(data, fs):
     N = len(data)
     fourier = fft(data)
     P2 = np.abs(fourier / N)
@@ -294,10 +276,4 @@ def plot_amplitude_char(data, fs,save_graph=False,filename=None):
     plt.xlabel(r'$f\,[Hz]$', fontsize=12)
     plt.ylabel(r'$|A|$', fontsize=12)
     plt.grid(True)
-    if save_graph:
-        if filename is not None:
-            original_size = fig.get_size_inches().copy()
-            fig.set_size_inches(6, 4)
-            plt.savefig(filename, format='eps', bbox_inches='tight', dpi=72)
-            fig.set_size_inches(original_size)
     plt.show()
