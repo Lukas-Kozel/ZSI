@@ -9,19 +9,9 @@ def plot_graph_FIR(fir_coeff, filtered_data, original_data, fs, filter_name: str
     
     f, t, Sxx = spectrogram(filtered_data, fs)
     
+    freqs_raw,amp_raw = compute_fourier(original_data,fs)
 
-    fourier_raw = fft(original_data)
-    P2_raw = np.abs(fourier_raw / len(original_data))
-    P1_raw = P2_raw[:len(original_data)//2 + 1]
-    P1_raw[1:-1] = 2 * P1_raw[1:-1]
-    f_sig_raw = fs * np.arange(0, len(original_data)//2 + 1) / len(original_data)
-    
-    fourier_filt = fft(filtered_data)
-    P2_filt = np.abs(fourier_filt / len(filtered_data))
-    P1_filt = P2_filt[:len(filtered_data)//2 + 1]
-    P1_filt[1:-1] = 2 * P1_filt[1:-1]
-    f_sig_filt = fs * np.arange(0, len(filtered_data)//2 + 1) / len(filtered_data)
-    
+    freqs_filt,amp_filt = compute_fourier(filtered_data,fs)    
 
     fig, ax = plt.subplots(1, 3, figsize=(24, 6))
     
@@ -38,8 +28,8 @@ def plot_graph_FIR(fir_coeff, filtered_data, original_data, fs, filter_name: str
     ax[1].set_ylabel(r'$f\,[Hz]$', fontsize=12)
     fig.colorbar(pcm, ax=ax[1], label="Log Power")
     
-    ax[2].plot(f_sig_raw, P1_raw, label="Před filtrací", linewidth=1)
-    ax[2].plot(f_sig_filt, P1_filt, label="Po filtraci", linewidth=1)
+    ax[2].plot(freqs_raw, amp_raw, label="Před filtrací", linewidth=1)
+    ax[2].plot(freqs_filt, amp_filt, label="Po filtraci", linewidth=1)
     ax[2].set_title("Amplitudově-frekvenční charakteristika - " + filter_name)
     ax[2].set_xlabel(r'$f\,[Hz]$', fontsize=12)
     ax[2].set_ylabel(r'$|A|$', fontsize=12)
@@ -86,20 +76,10 @@ def plot_graph_IIR(b,a, filtered_data, original_data, fs, filter_name: str):
     w, h = freqz(b,a, fs=fs)
     
     f, t, Sxx = spectrogram(filtered_data, fs)
-    
 
-    fourier_raw = fft(original_data)
-    P2_raw = np.abs(fourier_raw / len(original_data))
-    P1_raw = P2_raw[:len(original_data)//2 + 1]
-    P1_raw[1:-1] = 2 * P1_raw[1:-1]
-    f_sig_raw = fs * np.arange(0, len(original_data)//2 + 1) / len(original_data)
-    
-    fourier_filt = fft(filtered_data)
-    P2_filt = np.abs(fourier_filt / len(filtered_data))
-    P1_filt = P2_filt[:len(filtered_data)//2 + 1]
-    P1_filt[1:-1] = 2 * P1_filt[1:-1]
-    f_sig_filt = fs * np.arange(0, len(filtered_data)//2 + 1) / len(filtered_data)
-    
+    freqs_raw,amp_raw = compute_fourier(original_data,fs)
+
+    freqs_filt,amp_filt = compute_fourier(filtered_data,fs)
 
     fig, ax = plt.subplots(1, 3, figsize=(24, 6))
     
@@ -115,8 +95,8 @@ def plot_graph_IIR(b,a, filtered_data, original_data, fs, filter_name: str):
     ax[1].set_ylabel(r'$f\,[Hz]$', fontsize=12)
     fig.colorbar(pcm, ax=ax[1], label="Log Power")
     
-    ax[2].plot(f_sig_raw, P1_raw, label="Před filtrací", linewidth=1)
-    ax[2].plot(f_sig_filt, P1_filt, label="Po filtraci", linewidth=1)
+    ax[2].plot(freqs_raw, amp_raw, label="Před filtrací", linewidth=1)
+    ax[2].plot(freqs_filt, amp_filt, label="Po filtraci", linewidth=1)
     ax[2].set_title("Amplitudově-frekvenční charakteristika - " + filter_name)
     ax[2].set_xlabel(r'$f\,[Hz]$', fontsize=12)
     ax[2].set_ylabel(r'$|A|$', fontsize=12)
@@ -132,20 +112,10 @@ def plot_graph_IIR_sos(sos, filtered_data, original_data, fs, filter_name: str):
     
     f, t, Sxx = spectrogram(filtered_data, fs)
     
+    freqs_raw,amp_raw = compute_fourier(original_data,fs)
 
-    fourier_raw = fft(original_data)
-    P2_raw = np.abs(fourier_raw / len(original_data))
-    P1_raw = P2_raw[:len(original_data)//2 + 1]
-    P1_raw[1:-1] = 2 * P1_raw[1:-1]
-    f_sig_raw = fs * np.arange(0, len(original_data)//2 + 1) / len(original_data)
+    freqs_filt,amp_filt = compute_fourier(filtered_data,fs)
     
-    fourier_filt = fft(filtered_data)
-    P2_filt = np.abs(fourier_filt / len(filtered_data))
-    P1_filt = P2_filt[:len(filtered_data)//2 + 1]
-    P1_filt[1:-1] = 2 * P1_filt[1:-1]
-    f_sig_filt = fs * np.arange(0, len(filtered_data)//2 + 1) / len(filtered_data)
-    
-
     fig, ax = plt.subplots(1, 3, figsize=(24, 6))
     
     ax[0].plot(w, 20 * np.log10(np.abs(h)), linewidth=1)
@@ -161,8 +131,8 @@ def plot_graph_IIR_sos(sos, filtered_data, original_data, fs, filter_name: str):
     ax[1].set_ylabel(r'$f\,[Hz]$', fontsize=12)
     fig.colorbar(pcm, ax=ax[1], label="Intenzita (dB)")
     
-    ax[2].plot(f_sig_raw, P1_raw, label="Před filtrací")
-    ax[2].plot(f_sig_filt, P1_filt, label="Po filtraci")
+    ax[2].plot(freqs_raw, amp_raw, label="Před filtrací")
+    ax[2].plot(freqs_filt, amp_filt, label="Po filtraci")
     ax[2].set_title("Amplitudově-frekvenční charakteristika - " + filter_name)
     ax[2].set_xlabel("Frekvence (Hz)")
     ax[2].set_ylabel("Amplituda")
@@ -250,7 +220,7 @@ def plot_spectrogram(data, fs, title=""):
     freq, times, Sxx = spectrogram(data, fs, nperseg=window_size, noverlap=overlap, nfft=fft_resolution)
 
 
-    fig = plt.figure(figsize=(10, 6))
+    fig = plt.figure(figsize=(8, 6))
     plt.pcolormesh(times, freq, np.log10(np.abs(Sxx)), shading='gouraud', cmap='jet', rasterized=True)
     if title =="":
         plt.title("Spectrogram")
@@ -263,17 +233,21 @@ def plot_spectrogram(data, fs, title=""):
     plt.show()
 
 def plot_amplitude_char(data, fs):
-    N = len(data)
-    fourier = fft(data)
-    P2 = np.abs(fourier / N)
-    P1 = P2[:N // 2 + 1].copy()
-    P1[1:-1] = 2 * P1[1:-1]
-    f_sig = fs * np.arange(0, N // 2 + 1) / N
+    freqs, amp  = compute_fourier(data,fs)
 
-    fig = plt.figure(figsize=(10, 6))
-    plt.plot(f_sig, P1, linewidth=1)
+    plt.figure(figsize=(8, 6))
+    plt.plot(freqs, amp, linewidth=1)
     plt.title('Amplitudová frekvenční charakteristika')
     plt.xlabel(r'$f\,[Hz]$', fontsize=12)
     plt.ylabel(r'$|A|$', fontsize=12)
     plt.grid(True)
+    plt.xlim(0,fs/2)
     plt.show()
+
+def compute_fourier(data,fs):
+    N = len(data)
+    fft_vals = np.fft.rfft(data)
+    amp = np.abs(fft_vals) / N
+    amp[1:-1] *= 2
+    freqs = np.fft.rfftfreq(N, d=1/fs)
+    return freqs,amp
